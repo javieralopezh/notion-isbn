@@ -178,7 +178,7 @@ def get_pages(num_pages=None):
     logging.info("Looking for New Books...")
     results = []
 
-    with requests.post(url, json=payload, headers=NOTION_HEADERS) as response:
+    response = requests.post(url, json=payload, headers=NOTION_HEADERS) as response:
         data = response.json()
         results.extend(data["results"])
 
