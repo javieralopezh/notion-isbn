@@ -179,14 +179,30 @@ def get_pages(num_pages=None):
     results = []
 
     response = requests.post(url, json=payload, headers=NOTION_HEADERS)
-        data = response.json()
-        results.extend(data["results"])
+    if response.status_code != 200:
+        logging.error(f"Error en Notion API: {response.status_code} - {response.text}")
+        return []
+    
+    data = response.json()
+    if "results" not in data:
+        logging.error(f"No se encontró 'results' en la respuesta: {data}")
+        return []
+    
+    results.extend(data["results"])
 
-        while data.get("has_more") and num_pages is None:
-            payload["start_cursor"] = data["next_cursor"]
-            with requests.post(url, json=payload, headers=NOTION_HEADERS) as response:
-                data = response.json()
-                results.extend(data["results"])
+    while data.get("has_more") and num_pages is None:
+        payload["start_cursor"] = data["next_cursor"]
+        response = requests.post(url, json=payload, headers=NOTION_HEADERS)
+        if response.status_code != 200:
+            logging.error(f"Error en Notion API (paginación): {response.status_code} - {response.text}")
+            break
+            
+        data = response.json()
+        if "results" not in data:
+            logging.error(f"No se encontró 'results' en la respuesta (paginación): {data}")
+            break
+            
+        results.extend(data["results"])
 
     return results
 
