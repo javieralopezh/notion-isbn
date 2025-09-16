@@ -18,7 +18,7 @@ from pushbullet import Pushbullet
 # Constants and Configuration
 SERVICE_NAME = "Notion Books"
 NOTION_TOKEN = os.getenv("NOTION_TOKEN")
-DATABASE_ID = DATABASE_ID = "1a05f36e-12a5-81a9-b9a1-000ce23838de"
+DATABASE_ID = "1a05f36e-12a5-81a9-b9a1-000ce23838de"
 USE_PUSHBULLET = "no"  # Default to 'no' if USE_PUSHBULLET is not set
 USE_AWS = "no"  # Default to 'no' if USE_AWS is not set
 
