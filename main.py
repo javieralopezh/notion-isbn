@@ -240,8 +240,9 @@ def get_book_cover_from_isbndb(isbn):
 
 def update_notion(book_data, page_id, isbn):
     title = book_data.get("title", "")
-    if "subtitle" in book_data:
-        title += f": {book_data['subtitle']}"
+    subtitle = book_data.get("subtitle", "").strip()
+    if subtitle:
+        title += f": {subtitle}"
     title = re.sub(r"\([^)]*\)", "", title)[:100]
     cover = book_data.get('cover_url') or get_book_cover_from_isbndb(isbn) or "https://upload.wikimedia.org/wikipedia/commons/c/ca/1x1.png"
     img_name = f"{page_id}.jpg"
