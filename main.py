@@ -261,23 +261,26 @@ def update_notion(book_data, page_id, isbn):
     published_date = book_data.get("published_date", "")
     description = remove_html(book_data.get("description", ""))
     description = textwrap.shorten(description.replace('"', "").replace("\n", ""), width=2000, placeholder="...")
-    publisher = book_data.get("publisher", "No Publisher Found").replace(",", "").replace(";", "")
+    publisher = book_data.get("publisher", "").replace(",", "").replace(";", "")
     year = parser.parse(published_date).year if published_date else None
     page_count = book_data.get("page_count", 0)
     update_data = {
-        "cover": {"external": {"url": banner}},
-        "properties": {
-            "Author": {"select": {"name": authors}},
-            "Publisher": {"select": {"name": publisher}},
-            "ISBN": {"rich_text": [{"text": {"content": isbn}}]},
-            "Summary": {"rich_text": [{"text": {"content": description}}]},
-            "Type": {"select": {"name": "Physical"}},
-            "Cover": {"files": [{"name": title, "external": {"url": cover}}]},
-            "Year": {"number": year},
-            "Pages": {"number": page_count},
-            "Name": {"title": [{"text": {"content": title}}]},
+    "cover": {"external": {"url": banner}},
+    "properties": {
+        "Author": {"select": {"name": authors}},
+        "ISBN": {"rich_text": [{"text": {"content": isbn}}]},
+        "Summary": {"rich_text": [{"text": {"content": description}}]},
+        "Type": {"select": {"name": "Physical"}},
+        "Cover": {"files": [{"name": title, "external": {"url": cover}}]},
+        "Year": {"number": year},
+        "Pages": {"number": page_count},
+        "Name": {"title": [{"text": {"content": title}}]},
         },
     }
+    # Solo agregar Publisher si no está vacío
+    if publisher:
+        update_data["properties"]["Publisher"] = {"select": {"name": publisher}}
+    
     update_page(page_id, update_data)
     send_push("New book found!!!", f"Adding {title} to your book collection")
     os.remove(img_name)
